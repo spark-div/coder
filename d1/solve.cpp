@@ -1,17 +1,19 @@
 #include <stdio.h>
 
-#define HIST_LENGTH 24
+#define HIST_LENGTH 26
 #define STRING_LENGTH 100
 #define ReadString char[STRING_LENGTH];
 #define Histogram short[HIST_LENGTH] ;
 
-#define DBG_PRINT
+#define USE_DBG_PRINT
 
-#ifdef DBG_PRINT
-#define DEBUG(fmt, ...) printf(fmt, ##__VA_ARGS__)
+#ifdef USE_DBG_PRINT
+#define DEBUG_PRINT(fmt, ...) printf(fmt, ##__VA_ARGS__)
+#define DEBUG_DO(SMTH) SMTH
 #else
-#define DEBUG(fmt, ...)
-#endif//DBG_PRINT
+#define DEBUG_PRINT(fmt, ...)
+#define DEBUG_DO(SMTH)
+#endif//USE_DBG_PRINT
 
 size_t mystrlen(char* str)
 {
@@ -20,26 +22,20 @@ size_t mystrlen(char* str)
    return len; 
 }
 
-template<typename T>
-void cleanArr(T hist[], size_t len)
-{
-   for (int i=0; i< len; ++i)
-   { hist[i] = 0; }
-}
 
 void printArr(short hist[], size_t len)
 {
    for (int i=0; i< len; ++i)
    { 
-      DEBUG("%d,", hist[i]);
+      DEBUG_PRINT("%d,", hist[i]);
    }
-   DEBUG("\b\n");
+   DEBUG_PRINT("\b\n");
 }
 
 template<typename T>
 void makeHist(T* instring, size_t inLngth, T offset,  short iHisto[])
 {
-   DEBUG("ln=%d, off=%d str='%s' \n", inLngth, offset, instring);
+   DEBUG_PRINT("ln=%d, off=%d str='%s' \n", inLngth, offset, instring);
    for (int i=0; i< inLngth; ++i)
    {          
       iHisto[instring[i] - offset]++; 
@@ -56,43 +52,27 @@ bool cmpArr(short* arrA, short* arrB, size_t arr_size )
     return true;
 }
 
-int main(int argv, char *argc[])
+int main()
 {
    char ciphs[STRING_LENGTH];
    char origs[STRING_LENGTH];
-   FILE* pFile = NULL;   
-   if(argv >= 2)
+   while ( (EOF != scanf("%s", ciphs)) &&
+           (EOF != scanf("%s", origs)))   
    {
-      const char* fname = argc[1];
-      pFile = fopen(fname,"r+");
-   }
-   else
-   {
-      pFile = freopen("newin", "r+", stdin);
-   }
-   if (!pFile)
-   {
-      return -1;
-   }
-   
-   int res = 0;
-   while ( (EOF != fscanf(pFile, "%s", ciphs)) &&
-           (EOF != fscanf(pFile, "%s", origs)))   
-   {
-      DEBUG("%s\n",ciphs);
-      DEBUG("%s\n",origs);
+      DEBUG_PRINT("%s\n",ciphs);
+      DEBUG_PRINT("%s\n",origs);
       short lciphHisto[HIST_LENGTH]={0};
       short lorigHisto[HIST_LENGTH]={0};
       makeHist(ciphs, mystrlen(ciphs), 'A', lciphHisto);
       makeHist(origs, mystrlen(origs), 'A', lorigHisto);
-      printArr(lciphHisto, HIST_LENGTH-1);
-      printArr(lorigHisto, HIST_LENGTH-1);
+      DEBUG_DO(printArr(lciphHisto, HIST_LENGTH));
+      DEBUG_DO(printArr(lorigHisto, HIST_LENGTH));
       short lciphHistHisto[STRING_LENGTH]={0};
       short lorigHistHisto[STRING_LENGTH]={0};
-      makeHist<short>(lciphHisto, HIST_LENGTH-1, 0, lciphHistHisto);
-      makeHist<short>(lorigHisto, HIST_LENGTH-1, 0, lorigHistHisto);
-      printArr(lciphHistHisto, STRING_LENGTH-1);
-      printArr(lorigHistHisto, STRING_LENGTH-1);
+      makeHist<short>(lciphHisto, HIST_LENGTH, 0, lciphHistHisto);
+      makeHist<short>(lorigHisto, HIST_LENGTH, 0, lorigHistHisto);
+      DEBUG_DO(printArr(lciphHistHisto, STRING_LENGTH));
+      DEBUG_DO(printArr(lorigHistHisto, STRING_LENGTH));
       if (cmpArr(lciphHistHisto,lorigHistHisto,HIST_LENGTH))
          printf("YES\r\n");
       else
