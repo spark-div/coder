@@ -5,7 +5,7 @@
 #define ReadString char[STRING_LENGTH];
 #define Histogram short[HIST_LENGTH] ;
 
-#define USE_DBG_PRINT
+//#define USE_DBG_PRINT
 
 #ifdef USE_DBG_PRINT
 #define DEBUG_PRINT(fmt, ...) printf(fmt, ##__VA_ARGS__)
@@ -56,8 +56,8 @@ int main()
 {
    char ciphs[STRING_LENGTH];
    char origs[STRING_LENGTH];
-   while ( (EOF != scanf("%s", ciphs)) &&
-           (EOF != scanf("%s", origs)))   
+   while ( (EOF != scanf("%s\n", ciphs)) &&
+           (EOF != scanf("%s\n", origs)))   
    {
       DEBUG_PRINT("%s\n",ciphs);
       DEBUG_PRINT("%s\n",origs);
@@ -74,9 +74,9 @@ int main()
       DEBUG_DO(printArr(lciphHistHisto, STRING_LENGTH));
       DEBUG_DO(printArr(lorigHistHisto, STRING_LENGTH));
       if (cmpArr(lciphHistHisto,lorigHistHisto,HIST_LENGTH))
-         printf("YES\r\n");
+         printf("YES\n");
       else
-         printf("NO\r\n");
+         printf("NO\n");
    }
    return 0;
 }
